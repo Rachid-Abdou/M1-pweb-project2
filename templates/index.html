@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Your University Project</title>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+    
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        color: white;
+        padding: 10px;
+    }
+    
+    .logo {
+        max-width: 100px; /* Adjust the max-width to make the logo smaller */
+        max-height: 100px;
+    }
+    
+    .main-container {
+        display: flex;
+    }
+    
+    .menu {
+        width: 10%;
+        background-color: #eee;
+        padding: 20px;
+    }
+    
+    .menu ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .menu li {
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+    
+    .refresh-button {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .refresh-button:hover {
+        background-color: #45a049;
+    }
+
+    .plots-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        width: 80%;
+        padding: 20px;
+    }
+    
+    .plot {
+        width: 45%;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+    
+    /* Add this to your existing styles.css file */
+    
+    .plot-title {
+        text-align: center;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    
+    
+</style>
+<body>
+    <header>
+        <img class="logo" src="../static/usthb_logo.png" alt="Your Logo">
+        <h1>PRAVAN Mini Projet2</h1>
+        <button class="refresh-button" onclick="refreshPage()">Refresh</button>
+    </header>
+
+    <div class="main-container">
+        <div class="menu">
+            <ul>
+                    <li>Main page</li>
+                    <li><a href="#plot1">Plot 1</a></li>
+                    <li><a href="#plot2">Plot 2</a></li>
+                    <li><a href="#plot3">Plot 3</a></li>
+                    <li><a href="#plot4">Plot 4</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=GVsUOuSjvcg&t=64s" target="_blank">Youtube video</a></li>
+                    <li><a href="https://drive.google.com/drive/u/0/folders/1NzJvAQQvtGnkJu-1_jQfOClakgMk4weH" target="_blank">Rapport</a></li>
+                    <li><a href="https://github.com/Rachid-Abdou?tab=repositories" target="_blank">Github</a></li>
+            </ul>
+        </div>
+
+        <div class="plots-container">
+
+            <div class="plot">
+                <canvas id="plot1"></canvas>
+                <div class="plot-title">The number students in each year</div>
+            </div>
+            
+            <div class="plot">
+                <canvas id="plot2"></canvas>
+                <div class="plot-title">The number students in each SPECIALITE</div>
+            </div>
+
+            <div class="plot">
+                <canvas id="plot3">The Distribution of students means</canvas>
+                <div class="plot-title"></div>
+            </div>
+            
+            <div class="plot">
+                <canvas id="plot4"></canvas>
+                <div class="plot-title">Students' mean in each SPECIALITE</div>
+            </div>
+        
+        </div>
+
+    </div>
+</body>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    function refreshPage() {
+      location.reload();
+    } 
+
+// plt1: 
+    function plot_1(labels, data, id_plot) {
+        // Configuration options
+        var options = {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        };
+        // Create the bar chart
+        var chart = new Chart(document.getElementById(id_plot), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Number of students',
+              data: data,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: options
+        });
+        return chart;
+      }
+        
+
+
+
+
+  
+// plt 2
+    function plot_2(specialiteLabels, specialiteValues, canvasId) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: specialiteLabels,
+            datasets: [{
+              label: 'Number of students',
+              data: specialiteValues,
+              backgroundColor: 'lightgreen',
+              borderColor: 'green',
+              borderWidth: 1
+            }]
+          },
+        });
+      }
+
+
+    // plt 3
+    function plot_3(data, bins, canvasId) {
+        // Calculate histogram data
+        var histogramData = Array.from({ length: bins }, () => 0);
+        var minScore = 0 
+        var maxScore = 20
+        var binWidth = (maxScore - minScore) / bins;
+
+        data.forEach(score => {
+        var binIndex = Math.floor((score - minScore) / binWidth);
+        histogramData[binIndex]++;
+        });
+
+        // Format the data for Chart.js
+        var formattedData = {
+        labels: Array.from({ length: bins }, (_, i) => (minScore + i * binWidth).toFixed(0) + '-' + (minScore + (i + 1) * binWidth).toFixed(0)),
+        data: histogramData
+        };
+
+        // Create the histogram chart
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: formattedData.labels,
+            datasets: [{
+            label: 'Distribution',
+            data: formattedData.data,
+            backgroundColor: 'orange',
+            borderColor: 'black',
+            borderWidth: 1
+            }]
+        }
+        });
+    }
+
+  
+
+//plot 4
+      function plot_4(xm, ym, xf, yf, canvasId) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: xm,
+            datasets: [
+              {
+                label: 'Male',
+                data: ym,
+                borderColor: 'blue',
+                fill: false,
+              },
+              {
+                label: 'Female',
+                data: yf,
+                borderColor: 'pink',
+                fill: false,
+              },
+            ],
+          },
+        });
+      }
+  
+      
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Chart 1
+        plot_1({{data["plot1"][0]}}, {{data["plot1"][1]}}, "plot1");
+
+    // Chart 2
+        plot_2({{data['plot2']['X']}}, {{data['plot2']['y']}}, 'plot2');
+        
+            
+    // Chart 3
+        var bins = 20;
+        plot_3({{data['plot3']}}, bins, 'plot3');
+
+    // Chart 4
+        //createLineChart('SPECIALITE', 'MOYENNE', 'SPECIALITE', 'MOYENNE', data, 'myLineChart');
+        plot_4({{data['plot4']['m'][0]}}, {{data['plot4']['m'][1]}}, {{data['plot4']['f'][0]}}, {{data['plot4']['f'][1]}}, 'plot4');
+    });
+    
+    
+</script>
+</html>
